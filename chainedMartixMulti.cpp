@@ -1,6 +1,21 @@
 #include<bits/stdc++.h>
 using namespace std;
 
+// function to find Optimal Parenthesization for given input
+void parenthesis(int i, int j, int n, int *s, char &name) 
+{ 
+    if (i == j) 
+    { 
+        cout << name++; 
+        return; 
+    } 
+    cout << "("; 
+  
+    parenthesis(i, *((s+i*n)+j), n, s, name); 
+    parenthesis(*((s+i*n)+j) + 1, j, n, s, name); 
+    cout << ")"; 
+}
+
 int main()
 {
     int n;
@@ -9,31 +24,42 @@ int main()
     for(int i=0 ; i<n ; i++)
         cin >> d[i];
 
-    int c[n][n];
-    for (int i = 0; i < n; i++)
-        c[i][i] = 0;
+    int m[n][n];  
+    int s[n][n]; 
+    
+    for (int i = 1; i < n; i++)
+        m[i][i] = 0;
+    
     for(int len=2 ; len<n ; len++)
     {
-        for(int i=0 ; i<n-len+1 ; i++)
+        for(int i=1 ; i<n-len+1 ; i++)
         {
             int j = i+len-1;
-            if(j==n)continue;
-            c[i][j] = INT_MAX;
-            for(int k = i ; k<j ; k++)
+            
+            m[i][j] = INT_MAX;
+            for(int k = i ; k<=j-1 ; k++)
             {
-                int temp = c[i][k] + c[k+1][j] + d[i-1]*d[k]*d[j];
-                if(temp<c[i][j])
-                    c[i][j] = temp;
+                int val = m[i][k] + m[k+1][j] + d[i-1]*d[k]*d[j];
+                if(val < m[i][j])
+                {
+                    m[i][j] = val;
+                    s[i][j] = k;
+                }
             }
         }
     }
+    /* display the m array
     for(int i=0 ; i<n ; i++)
     {
         for(int j=0 ; j<n ; j++)
-            cout << c[i][j] << " ";
+            cout << m[i][j] << " ";
         cout << "\n";
-    }
-    cout << c[0][n-1];
+    }*/
+    cout << "Optimal cost is : " << m[1][n-1];
+    char name = 'A'; 
+    cout << "\nOptimal Parenthesization is : "; 
+    parenthesis(1, n-1, n, (int *)s, name);
+    
     return 0;
 }
 /*
